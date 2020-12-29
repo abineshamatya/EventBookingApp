@@ -1,0 +1,62 @@
+﻿@model EventBooking.Model.MvEvent
+@{
+
+    var model = Model;
+    if (Model.EventId != 0)
+    {
+        //model.StartDate = model.StartDate.ToString("MM/dd/yyyy");
+        //model.EndDate = new DateTime(model.EndDateTime.Ticks);
+        //var startDateStrig= model.StartDate.ToString("MM/dd/yyyy"); ;
+        //var endDateStrig = model.EndDate.ToString("MM/dd/yyyy"); ;
+    }
+}
+<div class="row">
+    <div class="col-md-12" id="evntFormMainDiv">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label">Event</label>
+                    <input asp-for="Event" class="form-control" id="Event" name="Event" />
+                    <span asp-validation-for="Event" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label">Event Category</label>
+                    @Html.DropDownListFor(ec => ec.EventCategoryListItemId,
+                                        new SelectList(Model.EventCategoryList, "EventCategoryListItemId", "Category", Model.EventCategoryListItemId),
+                                         "---Select Category---", new { @class = "form-control", @id = "EventCategory", @name = "EventCategory" })
+                    <span asp-validation-for="EventCategoryListItemId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="location" class="control-label">Location</label>
+                    <input asp-for="Location" id="Location" name="Location" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="seatCapacity" class="control-label">Seat Capacity</label>
+                    <input asp-for="SeatCapacity" class="form-control" id="SeatCapacity" name="SeatCapacity" min="1" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="DateRange" class="control-label">Start Date Time - End Date Time</label>
+                <input type="text" class="form-control" name="DateRange" id="DateRange"/>
+            </div>            
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label asp-for="Price" for="price" class="control-label">Price</label>
+                    <input asp-for="Price" class="form-control" id="Price" name="Price" type="number" step=0.01 min="0" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

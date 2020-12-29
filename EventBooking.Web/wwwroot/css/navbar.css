@@ -1,0 +1,46 @@
+﻿.navbar-nav .nav-item.avatar .dropdown-toggle img {
+    height: 35px;
+}
+
+.navbar-nav .nav-item.avatar, .navbar-nav .nav-item.avatar .dropdown-toggle {
+    padding: 0;
+}
+
+.navbar-nav .dropdown-menu a:hover {
+    color: #000 !important;
+}
+
+.font-small {
+    font-size: 0.8rem;
+}
+
+.z-depth-1a {
+    -webkit-box-shadow: 0 2px 5px 0 rgba(55, 161, 255, 0.26), 0 4px 12px 0 rgba(121, 155, 254, 0.25);
+    box-shadow: 0 2px 5px 0 rgba(55, 161, 255, 0.26), 0 4px 12px 0 rgba(121, 155, 254, 0.25);
+}
+
+.z-depth-1-half, .btn:hover {
+    -webkit-box-shadow: 0 5px 11px 0 rgba(85, 182, 255, 0.28), 0 4px 15px 0 rgba(36, 133, 255, 0.15);
+    box-shadow: 0 5px 11px 0 rgba(85, 182, 255, 0.28), 0 4px 15px 0 rgba(36, 133, 255, 0.15);
+}
+
+.btn .my-text-color {
+    color: #2196f3 !important;
+}
+
+.my-text-color {
+    color: #2196f3 !important;
+}
+
+.my-rounded {
+    border-radius: 10em;
+}
+
+.additional-selection {
+    opacity: 0.75;
+    font-size: 0.75em;
+}
+
+.full-width {
+    width: 100%;
+}

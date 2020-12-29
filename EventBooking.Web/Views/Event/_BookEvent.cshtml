@@ -1,0 +1,42 @@
+﻿@model EventBooking.Model.MvEvent
+@{
+    var model = Model;
+}
+
+<div class="row">
+    <div class="col-md-12" id="bookEventFormMainDiv">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label">Reserved Seat</label>
+                    <input asp-for="ReservedSeat" class="form-control" id="ReservedSeat" name="ReservedSeat" required />
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label">Available Seat</label>
+                    <input asp-for="AvailableSeat" class="form-control" id="AvailableSeat" name="AvailableSeat" readonly disabled />
+                </div>
+            </div>
+
+        </div>
+        <div class="row border-primary bg-light p-3">
+            <div class="col-md-12">
+                <div class="form-group">                 
+                    <div class="row">
+                        <label class="control-label">Ticket Confirmation</label>
+                    </div>
+                    <div class="row">
+                        <input asp-for="IsTicketConfirmed" type="checkbox" id="IsTicketConfirmed" name="IsTicketConfirmed" required />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+

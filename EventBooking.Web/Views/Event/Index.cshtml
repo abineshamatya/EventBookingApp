@@ -1,0 +1,455 @@
+﻿@model IEnumerable<EventBooking.Model.MvEvent>
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = "Event";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (ViewData["role"].ToString() == "Admin")
+{
+    <div class="row bottom-position">
+        <div class="col-md-2 p-0">
+            <span data-toggle="modal" data-target="modal" id="addEvent" class="btn btn-primary btn-circle btn-lg" onclick="addEditEvent(null);">
+                <a data-toggle="tooltip" data-placement="bottom" title="Add Event">
+                    <i class="fas fa-plus"></i>
+                </a>
+            </span>
+        </div>
+    </div>
+}
+@if (Model != null)
+{
+    <div class="row z-depth-1 p-2">
+        <div class="col-md-12">
+            <table id="eventTbl" class="table table-striped dataTable hover p-0" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Event)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.EventCategory)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Location)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.StartDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.EndDate)
+                        </th>
+                        @if (ViewData["role"].ToString() == "Admin")
+                        {
+                            <th>
+                                @Html.DisplayNameFor(model => model.SeatCapacity)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ReservedSeat)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.AvailableSeat)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.IsExpired)
+                            </th>
+                        }
+                        <th>
+                            @Html.DisplayNameFor(model => model.Price)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Event)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.EventCategory)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Location)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.EndDate)
+                            </td>
+                            @if (ViewData["role"].ToString() == "Admin")
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SeatCapacity)
+                                </td>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ReservedSeat)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.AvailableSeat)
+                                </td>
+
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.IsExpired)
+                                </td>
+                            }
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Price)
+                            </td>
+                            @if (ViewData["role"].ToString() == "Admin")
+                            {
+                                <td>
+                                    <span data-toggle="modal" data-target="modal" id="editEvent" class="p-2" onclick="addEditEvent(@JsonConvert.SerializeObject(item))">
+                                        <a data-toggle="tooltip" data-placement="bottom" title="Edit Event">
+                                            <i class="fas fa-edit fa-lg"></i>
+                                        </a>
+                                    </span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <span data-toggle="modal" data-target="modal" id="bookEvent" class="p-2" onclick="bookEvent(@JsonConvert.SerializeObject(item))">
+                                        <a data-toggle="tooltip" data-placement="bottom" title="Book Event">
+                                            <i class="fas fa-book fa-lg text-primary"></i>
+                                        </a>
+                                    </span>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<!-- Modal Start-->
+<form id="addEditEventForm">
+    <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header p-3">
+                    <h4 class="modal-title align-items-center" id="eventModalTitle"></h4>
+                    <button type="button" class="close btn btn-danger btn-floating" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body" id="eventModalBody">
+                </div>
+                <div class="modal-footer p-1">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="close">Close</button>
+                    <button type="submit" class="btn btn-info" id="save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form id="bookEventForm">
+    <div class="modal fade" id="bookEventModal" tabindex="-1" role="dialog" aria-labelledby="bookEventModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header p-3">
+                    <h4 class="modal-title align-items-center" id="bookEventModalTitle"></h4>
+                    <button type="button" class="close btn btn-danger btn-floating" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body" id="bookEventModalBody">
+                </div>
+                <div class="modal-footer p-1">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="close">Close</button>
+                    <button type="submit" class="btn btn-info" id="book">Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade ticketConfirmModal" id="ticketConfirmModal" tabindex="-1" role="dialog" aria-labelledby="ticketConfirmLabel">
+    <div class="modal-dialog modal-confirm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="fa fa-ticket-alt"></i>
+                </div>
+                <h4 class="modal-title w-100">Ticket Confirmed!</h4>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Your ticket for the <b id="eventName"></b> has been confirmed. Please check your email inbox!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success btn-block" data-dismiss="modal" onclick="ticketConfirmed();">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal End-->
+@section Scripts {
+    <script>
+        var eventModelGlb;
+        var bookEventModelGlb;
+        $(document).ready(function () {
+            // data table initialization
+            var eventTable = $('#eventTbl').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ],
+                "scrollX": true,
+                "paging": true,
+                "ordering": false,
+                "autoWidth": false,
+            });
+            $('#container').css('display', 'block');
+            eventTable.columns.adjust().draw();
+            $('#eventTbl tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    eventTable.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+
+            // open modal Add/Edit Event
+            $("#addEditEventForm").validate({
+                validClass: "success",
+                rules: {
+                    Event: {
+                        required: true
+                    },
+                    EventCategoryListItemId: {
+                        required: true
+                    },
+                    Location: {
+                        required: true
+                    },
+                    SeatCapacity: {
+                        minlength: 1,
+                        required: true
+                    },
+                    DateRange: {
+                        required: true
+                    }
+                },
+                // Specify validation error messages
+                messages: {
+                    Event: "Event field is required.",
+                    EventCategoryListItemId: "Event category field is required.",
+                    Location: "Location field is required.",
+                    SeatCapacity: {
+                        required: "Seat Capacity field is required.",
+                        minlength: jQuery.validator.format("At least {0} characters required!")
+                    },
+                    DateRange: "Start Date Time - End Date Time field is required.",
+                },
+                // Make sure the form is submitted to the destination defined
+                // in the "action" attribute of the form when valid
+                submitHandler: function (form) {
+                    var eventModel = eventModelGlb == null ? {} : eventModelGlb;
+                    var action = eventModelGlb == null ? '<b>Event</b> Added Succesfully.' : '<b>Event</b> Updated Succesfully.';
+                    var startDateDrp = $('#DateRange').data('daterangepicker').startDate;
+                    var endDateDrp = $('#DateRange').data('daterangepicker').endDate;
+                    if (isDateRangeValid(startDateDrp, endDateDrp)) {
+                        toast('Error', 'error', '<b>End Date Time</b> cannot be greater than <b>Start Date Time</b>', null, true);
+                        return false;
+                    }
+                    eventModel.Event = $("input#Event").val();
+                    eventModel.EventCategoryListItemId = parseInt($("#EventCategory").val());
+                    eventModel.Location = $("input#Location").val();
+                    eventModel.SeatCapacity = parseInt($("input#SeatCapacity").val());
+                    eventModel.StartDate = new Date(moment(startDateDrp).format('YYYY-MM-DD HH:mm:ms')).toISOString();
+                    eventModel.EndDate = new Date(moment(endDateDrp).format('YYYY-MM-DD HH:mm:ms')).toISOString();
+                    eventModel.Price = parseFloat($("input#Price").val());
+                    $.ajax({
+                        type: "POST",
+                        url: "/Event/AddEditEvent",
+                        data: JSON.stringify(eventModel),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (success) {
+                            toast('Success', 'success', action, null, true);
+                            window.location.href = "Index"
+                        },
+                        error: function (error) {
+                            toast('Error', 'error', 'Error occured while saving.', null, true);
+                        }
+                    });
+                }
+            });
+
+
+            // for book event add/edit form
+            $("#bookEventForm").validate({
+                validClass: "success",
+                rules: {
+                    ReservedSeat: {
+                        required: true,
+                        number: true,
+                        min: 1,
+                        max: function () {
+                            return parseInt($('#AvailableSeat').val());
+                        }
+                    },
+                    IsTicketConfirmed: {
+                        required: true
+                    },
+                },
+                // Specify validation error messages
+                messages: {
+                    ReservedSeat: {
+                        required: "Researved Seat field is required.",
+                        maxlength: jQuery.validator.format("We cannot book more than {0} researved seat!"),
+                        minlength: jQuery.validator.format("At least 1 seat must be reserved!")
+                    },
+                    IsTicketConfirmed: {
+                        required: "Ticket Confirmed field is required!",
+                    }
+                },
+                // Make sure the form is submitted to the destination defined
+                // in the "action" attribute of the form when valid
+                submitHandler: function (form) {
+                    bookEventModelGlb.ReservedSeat = parseInt($("input#ReservedSeat").val());
+                    bookEventModelGlb.IsTicketConfirmed = Boolean($("input#IsTicketConfirmed").val());
+                    $.ajax({
+                        type: "POST",
+                        url: "/Event/BookEvent",
+                        data: JSON.stringify(bookEventModelGlb),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (success) {
+                            toast('Success', 'success', '<b>Event</b> has been booked!', null, true);
+                            $('#bookEventModal').modal('hide');
+                            $('#eventName').text(bookEventModelGlb.Event);
+                            setTimeout(() => {
+                                $('#ticketConfirmModal').modal({
+                                    backdrop: false,
+                                    keyboard: true,
+                                    autoOpen: false
+                                });
+                            }, 1);
+
+                        },
+                        error: function (error) {
+                            toast('Error', 'error', '<b>Error</b> has occured while booking', null, true);
+                        }
+                    });
+
+                }
+            });
+        });
+
+        // for add/edit Event
+        function addEditEvent(mvEvent) {
+            eventModelGlb = mvEvent;
+
+            $("#eventModalTitle").text(mvEvent == null ? "Add Event" : "Edit Event");
+            $.ajax({
+                type: "GET",
+                url: "/Event/EventView",
+                data: mvEvent,
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $('#eventModalBody').html(response);
+                    if (mvEvent == null) {
+                        $('input[name="DateRange"]').daterangepicker({
+                            timePicker: true,
+                            startDate: moment().startOf('hour'),
+                            endDate: moment().startOf('hour').add(32, 'hour'),
+                            locale: {
+                                format: 'M/DD hh:mm A'
+                            }
+                        });
+                    } else {
+                        $('input[name="DateRange"]').daterangepicker({
+                            timePicker: true,
+                            startDate: moment(eventModelGlb.StartDate, 'YYYY-MM-DD HH:mm:ms'),
+                            endDate: moment(eventModelGlb.EndDate, 'YYYY-MM-DD HH:mm:ms'),
+                        });
+                    }
+
+                    $('#eventModal').modal({
+                        backdrop: false,
+                        keyboard: true,
+                        autoOpen: false
+                    });
+                },
+                failure: function (response) {
+                    toast('Error', 'error', 'Error while opening event form', null, true);
+                },
+                error: function (response) {
+                    toast('Error', 'error', 'Error while opening event form', null, true);
+                }
+            });
+        }
+
+        //for book event view
+        function bookEvent(mvEvent) {
+            bookEventModelGlb = mvEvent;
+            $("#bookEventModalTitle").text("Book Event");
+            if (bookEventModelGlb.ReservedSeat >= bookEventModelGlb.AvailableSeat && bookEventModelGlb.IsTicketConfirmed) {
+                toast('Information', 'info', 'No reserved seat available for this event', null, true);
+                return;
+            } else {
+                $.ajax({
+                    type: "GET",
+                    url: "/Event/BookEventView",
+                    data: mvEvent,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    success: function (response) {
+                        $('#bookEventModalBody').html(response);
+                        $('#bookEventModal').modal({
+                            backdrop: false,
+                            keyboard: true,
+                            autoOpen: true
+                        });
+                    },
+                    failure: function (response) {
+                        toast('Error', 'error', 'Error while opening booking form', null, true);
+                    },
+                    error: function (response) {
+                        toast('Error', 'error', 'Error while opening booking form', null, true);
+                    }
+                });
+            }
+        }
+
+        //After ticket Confirmation
+        function ticketConfirmed() {
+            window.location.href = "Index"
+        }
+
+        //confirmticket
+        function confirmTicket() {
+            bookEventModelGlb.IsTicketConfirmed = true;
+            $.ajax({
+                type: "POST",
+                url: "/Event/BookEvent",
+                data: JSON.stringify(bookEventModelGlb),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (success) {
+                    toast('Success', 'success', '<b>Event</b> has been booked!', null, true);
+                    $('#ticketConfirmModal').modal('hide');                   
+
+                },
+                error: function (error) {
+                    toast('Error', 'error', '<b>Error</b> has occured while booking', null, true);
+                }
+            });
+        }
+
+
+
+        // date validation
+        function isDateRangeValid(start, end) {
+            var mStart = moment(start).format('DD/MM/YYYY');
+            var mEnd = moment(end).format('DD/MM/YYYY');
+            return mStart > mEnd;
+        }
+    </script>
+}

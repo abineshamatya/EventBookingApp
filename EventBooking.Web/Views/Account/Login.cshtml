@@ -1,0 +1,168 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<div class="login-box">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-sm-2 col-md-4 col-lg-4">
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-4">
+            <div class="row" data-aos="zoom-in" data-aos-delay="200">
+                <div class="col-12 text-center mb-4">
+                    <h1 class="login-text-shadow">Welcome to Event Booking</h1>
+                </div>
+            </div>
+            <div class="row z-depth-1 ml-5 mr-5 mt-2" data-aos="zoom-in" data-aos-delay="200">
+                <div class="col-md-12 mt-4 mb-4">
+                    <div class="row">
+                        <div class="col-12 text-center mt-1 mb-2">
+                            <h1 class="login-text-shadow">EBM Login</h1>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center m-4" data-aos="fade-up" data-aos-delay="200">
+                        @*z-depth-1-half mt-4 pt-4 pb-2 pl-2 pr-2 login-form*@
+
+
+                        @*mb-5 ml-2 mr-2 mt-2*@
+
+                        <form class="login-form" name="login-form" id="loginForm">
+                            <!-- Email input -->
+                            <div class="form-outline mb-4">
+                                <label class="form-label" for="username">Username</label>
+                                <input type="email" id="username" name="username" class="form-control" required />
+                            </div>
+
+                            <!-- Password input -->
+                            <div class="form-outline form-group mb-4">
+                                <label class="form-label" for="password">Password</label>
+                                <div class="input-group" id="showHidePassword">
+                                    <input type="password" id="password" name="password" class="form-control" autocomplete="off" required />
+                                    <div class="input-group-addon password-eye-toogle border-top border-right border-bottom">
+                                        <a href=""><i class="fa fa-eye-slash text-dark" aria-hidden="true"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit button -->
+                            <button type="submit" class="btn btn-info btn-block sign-in">
+                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" id="loadingSignInSpinner"></span>
+                                <span class="visually-hidden" id="loadingSignInTxt">Signing In...</span>
+                                <span class="visually-hidden" id="signIn"> Sign in</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2 col-md-4 col-lg-4">
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            //intial case
+            hideIntialFormContent();
+
+            //start login form validate
+            $("#loginForm").validate({
+                // Specify validation rules
+                rules: {
+                    // The key name on the left side is the name attribute
+                    // of an input field. Validation rules are defined
+                    // on the right side
+                    username: {
+                        required: true,
+                        // Specify that email should be validated
+                        email: true
+                    },
+                    password: {
+                        minlength: 4,
+                        maxlength: 30,
+                        required: true,
+                    }
+                },
+                // Specify validation error messages
+                messages: {
+                    username: "Please enter your Username",
+                    password: {
+                        required: "Please provide a password",
+                        minlength: "Your password must be at least 4 characters long"
+                    },
+                    email: "Please enter a valid email address"
+                },
+                // Make sure the form is submitted to the destination defined
+                // in the "action" attribute of the form when valid
+                submitHandler: function (form) {
+                    // attr() method applied here
+                    $(".sign-in").attr('disabled', true);
+                    $("#loadingSignInSpinner").show();
+                    $("#loadingSignInTxt").show();
+                    $("#signIn").hide();
+
+                    //pass the form data
+                    var loginModel = {};
+                    loginModel.Username = $("input#username").val();
+                    loginModel.Password = $("input#password").val();
+                    // make a request call
+                    $.ajax({
+                        type: "POST",
+                        url: "/Account/Login",
+                        data: JSON.stringify(loginModel),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (success) {
+                            toast('Success', 'success', '<b>EBM</b> - Sign in successful', null, true);
+                            $("inpu#username").val("");
+                            $("inpu#password").val("");
+                            hideIntialFormContent();
+                            $(".sign-in").attr('disabled', false);
+                            window.location.href = '/Event/Index'
+                        },
+                        error: function (error) {
+                            toast('Error', 'error', '<b>EBM</b> - Sign in error', null, true);
+                            hideIntialFormContent();
+                            $(".sign-in").attr('disabled', false);
+
+                        }
+                    });
+                }
+            });
+
+            $("#showHidePassword a").on('click', function (event) {
+                event.preventDefault();
+                if ($('#showHidePassword input').attr("type") == "text") {
+                    $('#showHidePassword input').attr('type', 'password');
+                    $('#showHidePassword i').addClass("fa-eye-slash");
+                    $('#showHidePassword i').removeClass("fa-eye");
+                } else if ($('#showHidePassword input').attr("type") == "password") {
+                    $('#showHidePassword input').attr('type', 'text');
+                    $('#showHidePassword i').removeClass("fa-eye-slash");
+                    $('#showHidePassword i').addClass("fa-eye");
+                }
+            });
+        });
+
+        function hideIntialFormContent() {
+            $("#loadingSignInSpinner").hide();
+            $("#loadingSignInTxt").hide();
+            $("#signIn").show();
+        }
+
+        function toast(title, type, content, delay, dissmissible) {
+            $.toast({
+                title: title,
+                subtitle: '',
+                content: content,
+                type: type,
+                delay: delay == null || delay == 0 ? 3000 : delay,
+                dismissible: dissmissible,
+                stackable: true,
+                position: 'top-right'
+            });
+        }
+    </script>
+}

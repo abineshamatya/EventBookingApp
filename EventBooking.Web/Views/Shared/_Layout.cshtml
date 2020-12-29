@@ -1,0 +1,105 @@
+﻿@{
+    var controller = @ViewContext.RouteData.Values["controller"].ToString();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EBM</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/lib/dataTables/DataTables-1.10.23/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/lib/dataTables/DataTables-1.10.23/css/buttons.dataTables.min.css" rel="stylesheet" />
+    <link href="~/lib/daterangepicker/daterangepicker.css" rel="stylesheet" />
+    <link href="~/lib/mdb-bootstrap/css/mdb.min.css" rel="stylesheet" />
+    <link href="~/lib/toast-manager/toast.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <!--Navbar -->
+        <nav class="mb-1 navbar navbar-expand-lg navbar-dark bg-info fixed-top scrolling-navbar">
+            <logo>
+                <a class="logo navbar-brand" href="#">
+                    <strong>EBM</strong>
+                </a>
+            </logo>
+            <!-- SideNav slide-out button -->
+
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto">
+                    @foreach (var nav in (List<EventBooking.Model.MvNavigation>)@ViewData["navigation"])
+                    {
+                        <li class=" @("nav-item" + (controller == nav.Navigation ? " active" : ""))">
+
+                            <a class="nav-link" href="@Url.Action("Index",nav.Navigation)">
+                                @nav.Navigation
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+
+                    }
+                </ul>
+                <ul class="navbar-nav ml-auto nav-flex-icons">
+                    <li class="nav-item avatar">
+                        <a class="nav-link p-0" href="/Account/Index">
+                            LogOut
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+    </header>
+    <div class="container content-wrapper">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    @*<footer class="border-top footer text-muted">
+            <div class="container">
+                Copyright &copy; 2020 - EventBookingModule
+            </div>
+        </footer>*@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/moment/moment.min.js"></script>
+    <script src="~/lib/daterangepicker/daterangepicker.js"></script>
+    <script src="~/lib/mdb-bootstrap/js/popper.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/dataTables/DataTables-1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/dataTables/DataTables-1.10.23/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/lib/dataTables/DataTables-1.10.23/js/dataTables.buttons.min.js"></script>
+    <script src="~/lib/dataTables/DataTables-1.10.23/js/jszip.min.js"></script>
+    <script src="~/lib/dataTables/DataTables-1.10.23/js/pdfmake.min.js"></script>
+    <script src="~/lib/dataTables/DataTables-1.10.23/js/vfs_fonts.js"></script>
+    <script src="~/lib/dataTables/DataTables-1.10.23/js/buttons.html5.min.js"></script>
+    <script src="~/lib/dataTables/DataTables-1.10.23/js/buttons.print.min.js"></script>
+    <script src="~/lib/mdb-bootstrap/js/mdb.min.js"></script>
+    <script src="~/lib/toast-manager/toast.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        function toast(title, type, content, delay, dissmissible, position) {
+            $.toast({
+                title: title,
+                subtitle: '',
+                content: content,
+                type: type,
+                delay: delay == null || delay == 0 ? 3000 : delay,
+                dismissible: dissmissible,
+                stackable: true,
+                position: position != null ? position : 'top-right'
+            });
+        }
+
+    </script>
+
+</body>
+</html>

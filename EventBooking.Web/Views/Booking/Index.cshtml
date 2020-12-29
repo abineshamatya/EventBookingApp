@@ -1,0 +1,119 @@
+﻿@model IEnumerable<EventBooking.Model.MvBooking>
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = "Booking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (Model != null)
+{
+    <div class="row z-depth-1 p-2">
+        <div class="col-md-12">
+            <table id="bookingTbl" class="table table-striped dataTable hover p-0" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Event)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.EventCategory)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Location)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.SeatCapacity)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ReservedSeat)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.AvailableSeat)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.IsExpired)
+                        </th>
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.Price)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.IsTicketConfirmed)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Event)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.EventCategory)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Location)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SeatCapacity)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ReservedSeat)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AvailableSeat)
+                            </td>
+                            <td class="text-center">
+                                @Html.DisplayFor(modelItem => item.IsExpired)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Price)
+                            </td>
+                            <td class="text-center">
+                                @Html.DisplayFor(modelItem => item.IsTicketConfirmed)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+}
+@section Scripts {
+    <script>
+        var eventModelGlb;
+        $(document).ready(function () {
+            //data table initialization
+            var bookingTable = $('#bookingTbl').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ],
+                "scrollX": true,
+                "paging": true,
+                "autoWidth": false,
+            });
+            $('#container').css('display', 'block');
+            bookingTable.columns.adjust().draw();
+            $('#bookingTbl tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    bookingTable.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+        });
+    </script>
+}

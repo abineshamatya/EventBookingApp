@@ -1,0 +1,11 @@
+﻿@{
+    var controller = @ViewContext.RouteData.Values["controller"].ToString();
+
+    if (controller == "Account")
+    {
+        Layout = "_LoginLayout";
+    }
+    else {
+        Layout = "_Layout";
+    }
+}
